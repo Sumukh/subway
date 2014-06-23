@@ -13,7 +13,7 @@ module.exports = {
 
   // Servers to which the client is allowed to connect to, restrict all the others
   // server_whitelist: ["irc.freenode.net"],
-  server_whitelist: false,
+  server_whitelist: ["irc.cs61a.org"],
 
   /* not implemented yet */
   user_access: {
@@ -39,5 +39,5 @@ module.exports = {
   cookie_time: 7 * 24,
 
   // Secret key used to generate a unique and secure session cookie hash.
-  secret_key: "MY-SUPER-SECRET-KEY"
+  secret_key: "MY1-SUPER-SECRET-KEY"
 };

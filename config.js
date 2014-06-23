@@ -26,10 +26,6 @@ module.exports = {
     port: process.env.PORT || 3000
   },
 
-  prod: {
-    port: process.env.PORT || 14858 // Nodester port
-  },
-
   use_polling: process.env.USE_POLLING || false, // Use polling if websockets aren't supported
 
   // limit each user's connection log to this amount of messages (***not implemented yet***)

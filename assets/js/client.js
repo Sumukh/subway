@@ -31,7 +31,7 @@ $(function() {
   try {
     window.unity.api = external.getUnityObject(1.0);
     window.unity.init({
-      name: "Subway IRC",
+      name: "CS61A IRC",
       iconUrl: window.location.protocol+"//"+window.location.host+"/assets/images/subway.png",
       onInit: function() {
         window.unity.connected = true;
@@ -48,7 +48,7 @@ $(function() {
   // **TODO**: is there a better place for this to go?
   $(window).bind('beforeunload', function() {
     if(window.irc.connected && window.irc.loggedIn) { 
-      return "If you leave, you'll be signed out of Subway.";
+      return "If you leave, you'll be signed out of IRC.";
     }
   });
 
@@ -86,6 +86,7 @@ $(function() {
     } else {
       irc.appView.overview.render({currentTarget: {id: "connection"}});
     }
+
   });
 
   irc.socket.on('disconnect', function() {
@@ -159,6 +160,8 @@ $(function() {
   irc.socket.on('motd', function(data) {
     var message = new Message({sender: 'status', raw: data.motd, type: 'motd'});
     irc.chatWindows.getByName('status').stream.add(message);
+    irc.socket.emit('join',  '#general' );
+    irc.socket.emit('getOldMessages',{channelName: '#general', skip:0, amount: 50});
   });
 
   // Whois data
@@ -219,16 +222,16 @@ $(function() {
     chatWindow.stream.add({sender: data.by, raw: message, type: 'mode'});
   });
 
-  irc.socket.on('pm', function(data) {
-    var chatWindow = irc.chatWindows.getByName(data.nick.toLowerCase());
-    if (typeof chatWindow === 'undefined') {
-      irc.chatWindows.add({name: data.nick.toLowerCase(), type: 'pm'})
-        .trigger('forMe', 'newPm');
-      irc.socket.emit('getOldMessages',{channelName: data.nick.toLowerCase(), skip:0, amount: 50});
-      chatWindow = irc.chatWindows.getByName(data.nick.toLowerCase());
-    }
-    chatWindow.stream.add({sender: data.nick, raw: data.text, type: 'pm'});
-  });
+  // irc.socket.on('pm', function(data) {
+  //   var chatWindow = irc.chatWindows.getByName(data.nick.toLowerCase());
+  //   if (typeof chatWindow === 'undefined') {
+  //     irc.chatWindows.add({name: data.nick.toLowerCase(), type: 'pm'})
+  //       .trigger('forMe', 'newPm');
+  //     irc.socket.emit('getOldMessages',{channelName: data.nick.toLowerCase(), skip:0, amount: 50});
+  //     chatWindow = irc.chatWindows.getByName(data.nick.toLowerCase());
+  //   }
+  //   chatWindow.stream.add({sender: data.nick, raw: data.text, type: 'pm'});
+  // });
 
   irc.socket.on('join', function(data) {
     var chanName = data.channel.toLowerCase();

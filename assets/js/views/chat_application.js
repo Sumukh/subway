@@ -9,16 +9,13 @@ var ChatApplicationView = Backbone.View.extend({
     
     // Notifications.
     // Firefox notifications is the first check, chrome the other.
-    if (("Notification" in window && "get" in window.Notification) ||
-        "webkitNotifications" in window) {
+    if ("Notification" in window || "webkitNotifications" in window) {
       // build title and body for the notification saying subway has notifications
-      var title = 'Notifications from Subway';
-      var body = 'Subway will display notifications like this for this session';
-
+      var title = 'Notifications from 61A';
+      var body = '61A will display notifications like this if you are mentioned';
       // We display a notification saying that subway will use notifications.
       // On Chrome this is also a way of requesting permission to display notifications.
-      if (("Notification" in window && "get" in window.Notification) &&
-          Notification.permission !== 'denied') {
+      if ("Notification" in window && window.Notification.permission !== 'denied') {
         // We have to bind the function to `this` to be able to access this.displayNotification
         Notification.requestPermission(_.bind(function (permission) {
           if(permission === 'granted') {
@@ -35,7 +32,6 @@ var ChatApplicationView = Backbone.View.extend({
       irc.chatWindows.bind('messageNotification', this.desktopNotification,
         this);
     }
-
 
     // Preload sound files
     if (this._supportedFormat) {
@@ -77,6 +73,7 @@ var ChatApplicationView = Backbone.View.extend({
     }
     return this;
   },
+
 
   // Net connection error
   showError: function(text) {
@@ -166,21 +163,21 @@ var ChatApplicationView = Backbone.View.extend({
 
   // Display a desktop notification. 
   displayNotification: function(title, body) {
-    var icon = '/assets/images/subway.png';
-    // Firefox:
-    if ("Notification" in window && "get" in window.Notification) {
+    var icon = '/assets/images/61a.jpg';
+    // Firefox & Chrome:
+    // "get" in window.Notification was here but I don't think it's neccesary.
+    if ("Notification" in window) {
       if (Notification.permission === 'granted') {
         // Firefox's API doesn't need a call to a method to show the notification.
         new Notification(title, {body: body, icon: icon});
       }
     }
-    // Chrome:
     else if ("webkitNotifications" in window && 
         window.webkitNotifications.checkPermission() === 0) {
       var notification = window.webkitNotifications.createNotification(
         icon, title, body
       );
-      // Chrome's API need a call to .show() to show the notification.
+      // Safari's API need a call to .show() to show the notification.
       notification.show();
 
       // After 5 seconds we close the notification

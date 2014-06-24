@@ -39,7 +39,7 @@ script(id="overview_home", type="text/html")
       {{/loggedIn}}
     .control-group
       .controls
-        button#connect-button.btn.btn-primary.spacing-right(type="button") Connect
+        button#connect-button.btn.btn-primary.spacing-right(type="button", onclick="javascript:window.webkitNotifications.requestPermission();") Connect
 
 script(id="overview", type="text/html")
   #overview
@@ -130,7 +130,7 @@ script(id="overview_settings", type="text/html")
   {{/loggedIn}}
   p#settings-chrome-notifications
     a.btn.btn-small.btn-success#chrome-notifications-allow-button(
-      onclick="javascript:window.webkitNotifications.requestPermission();")
+      onclick="javascript:window.webkitNotifications.requestPermission();window.Notification.requestPermission();")
       | Enable chrome desktop notifications (will ask for permission)
 
 script(id="overview_login", type="text/html")

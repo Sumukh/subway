@@ -39,7 +39,7 @@ script(id="overview_home", type="text/html")
       {{/loggedIn}}
     .control-group
       .controls
-        button#connect-button.btn.btn-primary.spacing-right(type="button", onclick="javascript:window.webkitNotifications.requestPermission();") Connect
+        button#connect-button.btn.btn-primary.spacing-right(type="button", onclick="javascript:if ('Notification' in window) { Notification.requestPermission(); } else { window.webkitNotifications.requestPermission(); };") Connect
 
 script(id="overview", type="text/html")
   #overview

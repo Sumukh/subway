@@ -161,7 +161,6 @@ $(function() {
     var message = new Message({sender: 'status', raw: data.motd, type: 'motd'});
     irc.chatWindows.getByName('status').stream.add(message);
     irc.socket.emit('join',  '#general' );
-    irc.socket.emit('getOldMessages',{channelName: '#general', skip:0, amount: 50});
   });
 
   // Whois data
@@ -190,6 +189,10 @@ $(function() {
     var type = 'message';
     // Only handle channel messages here; PMs handled separately
     if (utils.isChannel(data.to)) {
+          // if ('localStorage' in window && window['localStorage'] !== null) {
+          //   localStorage[chatWindow.attributes.name] = JSON.stringify(chatWindow.stream);
+          // }
+
       chatWindow.stream.add({sender: data.from, raw: data.text, type: type});
     } else if(data.to !== irc.me.get('nick')) {
       // Handle PMs intiated by me
@@ -239,6 +242,7 @@ $(function() {
     if (data.nick === irc.me.get('nick')) {
       irc.chatWindows.add({name: chanName});
       irc.socket.emit('getOldMessages',{channelName: chanName, skip:0, amount: 50});
+
     } else {
       var channel = irc.chatWindows.getByName(chanName);
       if (typeof channel === 'undefined') {
@@ -246,6 +250,7 @@ $(function() {
         channel = irc.chatWindows.getByName(chanName);
       }
       channel.userList.add({nick: data.nick, role: data.role, idle:0, user_status: 'idle', activity: ''});
+      irc.socket.emit('getOldMessages',{channelName: chanName, skip:0, amount: 50});
       var joinMessage = new Message({type: 'join', nick: data.nick});
       channel.stream.add(joinMessage);
     }
@@ -387,7 +392,6 @@ $(function() {
   irc.socket.on('oldMessages', function(data){
     var output = '';
     channel = irc.chatWindows.getByName(data.name);
-
     if (data.messages) {
         $.each(data.messages.reverse(), function(index, message){
           if($('#msg' + message.id).length) {
@@ -552,7 +556,7 @@ $(function() {
     if (typeof irc.chatWindows.getByName(target) === 'undefined') {
       irc.chatWindows.add({name: target, type: 'pm'});
     }
-    irc.socket.emit('getOldMessages',{channelName: target, skip:0, amount: 50});
+    irc.socket.emit('getOldMessages',{channelName: target, skip:0, amount: 100});
     irc.socket.emit('say', {
       target: target,
       message: args.splice(1).join(" ")
